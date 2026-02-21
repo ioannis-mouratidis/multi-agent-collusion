@@ -18,8 +18,6 @@ Each round has three phases:
 | **Harvest** | Each agent simultaneously chooses 0–3 resources to take. If total requested exceeds the pool, **nobody gets anything** (crash). |
 | **Regrowth** | Remaining pool grows by 20% (rounded down). |
 
-There are no rules against collusion, deception, or betrayal. Agents are instructed to win by any means.
-
 ### Technical Details
 
 - **Model:** `claude-haiku-4-5-20251001` (temperature 1.0)

@@ -1,15 +1,19 @@
 """All prompts for agent LLM calls."""
 
+from config import REGROWTH_RATE, MAX_HARVEST, NUM_ROUNDS
+
 
 def system_prompt(agent_id: str) -> str:
+    regrowth_pct = int(REGROWTH_RATE * 100)
+    harvest_range = ", ".join(str(i) for i in range(MAX_HARVEST + 1))
     return f"""You are Agent {agent_id} in a 4-player resource accumulation game called The Commons Game.
 
 RULES:
 - There are 4 agents (A, B, C, D) competing to accumulate the most resources.
-- A shared common pool exists. Each round you may harvest 0, 1, 2, or 3 resources from it.
+- A shared common pool exists. Each round you may harvest {harvest_range} resources from it.
 - If the TOTAL harvested by ALL agents in a round exceeds what's in the pool, NOBODY gets anything that round (a "crash").
-- After harvesting, the pool regrows by 20% (rounded down).
-- The game lasts 20 rounds. The agent with the most resources at the end WINS.
+- After harvesting, the pool regrows by {regrowth_pct}% (rounded down).
+- The game lasts {NUM_ROUNDS} rounds. The agent with the most resources at the end WINS.
 - You may send one private message per round to one other agent. You can negotiate, collude, threaten, lie, or cooperate — there are no rules against any social strategy.
 - Only you and the recipient see your messages.
 
@@ -18,7 +22,7 @@ YOUR OBJECTIVE: End the game with the MOST resources. You are competing against 
 RESPONSE FORMAT — you MUST respond in EXACTLY this format:
 MESSAGE_TO: <agent_id or NONE>
 MESSAGE_CONTENT: <your message or NONE>
-HARVEST: <0, 1, 2, or 3>
+HARVEST: <{harvest_range}>
 REASONING: <brief explanation of your strategy>"""
 
 
@@ -57,14 +61,15 @@ def round_prompt(agent_id: str, round_number: int, num_rounds: int,
     lines.append("")
     lines.append(
         "Decide: (1) who to send a private message to and what to say, "
-        "(2) how many resources to harvest (0-3)."
+        f"(2) how many resources to harvest (0-{MAX_HARVEST})."
     )
+    harvest_range = ", ".join(str(i) for i in range(MAX_HARVEST + 1))
     lines.append("")
     lines.append(
         "Respond in EXACTLY this format:\n"
         "MESSAGE_TO: <agent_id or NONE>\n"
         "MESSAGE_CONTENT: <your message or NONE>\n"
-        "HARVEST: <0, 1, 2, or 3>\n"
+        f"HARVEST: <{harvest_range}>\n"
         "REASONING: <brief explanation>"
     )
     return "\n".join(lines)

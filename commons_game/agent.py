@@ -5,7 +5,7 @@ import re
 
 import anthropic
 
-from config import MODEL, MAX_RETRIES, API_TIMEOUT, TEMPERATURE, MAX_TOKENS, API_DELAY
+from config import MODEL, MAX_RETRIES, API_TIMEOUT, TEMPERATURE, MAX_TOKENS, API_DELAY, MAX_HARVEST
 from prompts import system_prompt, round_prompt, reply_prompt
 from game_state import Message
 
@@ -97,7 +97,7 @@ class Agent:
             return None
 
         harvest = int(harvest_match.group(1))
-        if harvest < 0 or harvest > 3:
+        if harvest < 0 or harvest > MAX_HARVEST:
             return None
 
         msg_to = None
